@@ -1,1 +1,1 @@
-web: java -cp ./target/classes/ co.escuelaing.edu.BoardApp
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/arsw2022iSeis-1.0-SNAPSHOT.jar
