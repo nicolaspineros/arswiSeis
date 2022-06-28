@@ -1,12 +1,17 @@
 class BoardComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.myRef = React.createRef();    
+    this.myRef = React.createRef();
+    this.state = {
+        error: null,
+        isLoaded: false,
+        status: ""
+    };
   }
 
   Sketch = (p) => {
     p.setup = () => {
-      p.createCanvas(screen.width-60, screen.height-200);
+      p.createCanvas(screen.width - 60, screen.height - 200);
     };
 
     p.draw = () => {
@@ -21,19 +26,42 @@ class BoardComponent extends React.Component {
   };
 
   componentDidMount() {
-    this.myP5 = new p5(this.Sketch, this.myRef.current);        
+    this.myP5 = new p5(this.Sketch, this.myRef.current);
+    this.timerID = setInterval(
+        () => this.checkStatus(),
+        5000
+    );
   }
 
+  checkStatus() {
+    fetch("/status")
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            status: result.status,
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error,
+          });
+        }
+      );
+  }
 
   render() {
-    
-      return (
-        
-        <div ref={this.myRef}></div>
-        
-      );
-      }
-  
+    const { error, isLoaded, status } = this.state;
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    } else {
+        return( 
+            <div ref={this.myRef} id="canvas"></div>
+        )
+    }
+  }
 }
 
 ReactDOM.render(<BoardComponent />, document.getElementById("board"));

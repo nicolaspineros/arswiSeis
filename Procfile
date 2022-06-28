@@ -1,0 +1,1 @@
+web: java -cp ./target/classes/ co.escuelaing.edu.BoardApp
